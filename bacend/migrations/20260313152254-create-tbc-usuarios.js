@@ -1,6 +1,6 @@
 'use strict';
 
-const { toDefaultValue } = require('sequelize/lib/utils');
+const { ForeignKeyConstraintError } = require('sequelize');
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
@@ -14,43 +14,53 @@ module.exports = {
       },
       nombre: {
         type: Sequelize.STRING(100),
-        allowNull:false
+        allowNull: false
       },
       direccion: {
         type: Sequelize.STRING(150),
-                allowNull:false
+        allowNull: false
       },
       telefono: {
         type: Sequelize.STRING(15),
-                allowNull:false
+        allowNull: false
       },
       email: {
         type: Sequelize.STRING(120),
-                allowNull:false
+        allowNull: false
       },
       password: {
-        type: Sequelize.STRING(225),
-                allowNull:false
+        type: Sequelize.STRING(255), 
+        allowNull: false
       },
       rol: {
-        type: Sequelize.STRING.EMUM("admin","cliente"),
-        allowNull: false ,
-        toDefaultValue: 'cliente'
+        type: Sequelize.ENUM("admin", "cliente"),
+        allowNull: false,
+        defaultValue: 'cliente' 
       },
       fecha_registro: {
         type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP') 
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP') 
       }
     });
+    tbc_usuarios.associate = (models) => {
+    tbc_usuarios.hasMany(models.tbb_carrito,{
+      ForeignKey: 'id_usuario',
+      as: 'tbb_carrito'
+    });
+  };
   },
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('tbc_usuarios');
+   
   }
+  
 };
